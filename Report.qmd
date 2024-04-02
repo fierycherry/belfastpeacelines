@@ -1,0 +1,51 @@
+---
+title: "Belfast_Peacelines"
+format: pdf
+editor: visual
+---
+
+## Belfast Peacelines
+
+Geography students from Newcastle University undertook this project as a omponent of their field trip to Ireland, focusing on the exploration of political concepts and the differences between the "two Irelands".
+
+Following interviews with local residents in Belfast, the group discerned seven distinct peacelines classified into the categories of "formal," "informal," and "invisible."
+
+Using Google Maps, coordinates were obtained and compiled into a CSV file.
+
+```{r}
+library(tidyverse)
+
+data <- read_csv("~/Dropbox/Mac/Documents/Newcastle University/fieldtrip/dataset_belfast.csv")
+
+```
+
+Subsequently, the peacelines were graphically represented on the map below:
+
+```{r}
+library(leaflet)
+library(sf)
+
+sf_data <- st_as_sf(data, coords = c("long", "lat"), crs = 4326)  # Note the order of coordinates
+
+# Plot map with points
+
+map_points <- leaflet(sf_data) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    radius = 5,
+    color = ~case_when(
+      type == "formal" ~ "blue",
+      type == "informal" ~ "green",
+      type == "invisible" ~ "red"  # Assigning red color to "invisible"
+    ),
+    label = ~name,
+    popup = ~paste("<br> type: ", type)
+  ) %>%
+  addLegend("bottomright", colors = c("blue", "green", "red"), 
+            labels = c("Formal", "Informal", "Invisible"), title = "Type")
+
+# Display the map
+map_points
+```
+
+We used the packages "leafleft" and "special features" to plot the points. Each point corresponds to a peaceline location, with colours indicating their respective types: "formal," "informal," and "invisible."
